@@ -49,12 +49,9 @@
           "metadata": {
             "labels": {
               "app": "matomo",
-              "deploymentconfig": "matomo-proxy",
-              "name": "matomo-proxy",
+              "deploymentconfig": "${NAME}",
+              "service": "${NAME}",
               "template": "matomo-template"
-            },
-            "annotations": {
-              "openshift.io/generated-by": "OpenShiftWebConsole"
             }
           },
           "spec": {
@@ -81,7 +78,7 @@
       "metadata": {
         "name": "${NAME}",
         "labels": {
-          "app": "fathom",
+          "app": "matomo",
           "name": "${NAME}"
         }
       },
@@ -142,7 +139,7 @@
       "displayName": "Source Image Name",
       "description": "The name of the image to use for this resource.",
       "required": true,
-      "value": "fathom-proxy"
+      "value": "matomo-proxy"
     },
     {
       "name": "TAG_NAME",
@@ -153,7 +150,7 @@
     },
     {
       "name": "MATOMO_URL",
-      "displayName": "Fathom URL",
+      "displayName": "Matomo URL",
       "description": "The public domain endpoint for Matomo. A value will be created by default if not specified.",
       "required": false,
       "value": ""

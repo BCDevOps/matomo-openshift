@@ -99,6 +99,28 @@
       }
     },
     {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${NAME}-config",
+            "labels": {
+              "app": "matomo",
+              "name": "${NAME}"
+            }
+        },
+        "spec": {
+            "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
+            "accessModes": [
+                "ReadWriteOnce"
+            ],
+            "resources": {
+                "requests": {
+                    "storage": "${PERSISTENT_VOLUME_SIZE}"
+                }
+            }
+        }
+    },
+    {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
@@ -129,7 +151,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true,
-      "value": "fathom"
+      "value": "matomo"
     },
     {
       "name": "IMAGE_NAMESPACE",
@@ -143,7 +165,7 @@
       "displayName": "Source Image Name",
       "description": "The name of the image to use for this resource.",
       "required": true,
-      "value": "fathom"
+      "value": "matomo"
     },
     {
       "name": "TAG_NAME",
@@ -151,6 +173,20 @@
       "description": "The TAG name for this environment, e.g., dev, test, prod",
       "required": true,
       "value": "prod"
+    },
+    {
+        "name": "PERSISTENT_VOLUME_SIZE",
+        "displayName": "Persistent Volume Size",
+        "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
+        "required": true,
+        "value": "1Gi"
+    },
+    {
+        "name": "PERSISTENT_VOLUME_CLASS",
+        "displayName": "Persistent Volume Class name",
+        "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+        "required": false,
+        "value": "gluster-file"
     },
     {
       "name": "CPU_REQUEST",

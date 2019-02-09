@@ -271,7 +271,7 @@
           "displayName": "Source Image Name",
           "description": "The name of the image to use for this resource.",
           "required": true,
-          "value": "postmariadb"
+          "value": "mariadb"
       },
       {
           "name": "TAG_NAME",
@@ -307,7 +307,7 @@
       {
           "name": "MYSQL_ROOT_PASSWORD",
           "displayName": "MariaDB Admin Password",
-          "description": "Password for the 'postgres' MariaDB administrative account.  Needs to be base64 encoded.",
+          "description": "Password for the MariaDB administrative account.  Needs to be base64 encoded.",
           "required": true,
           "generate": "expression",
           "from": "[a-zA-Z0-9]{16}"
