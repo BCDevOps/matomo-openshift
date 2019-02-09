@@ -1,0 +1,190 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "matomo-template"
+  },
+  "objects": [{
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "generation": 1,
+        "labels": {
+          "app": "matomo",
+          "service": "${NAME}",
+          "template": "matomo-template"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+        "triggers": [{
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "matomo",
+          "deploymentconfig": "${NAME}",
+          "service": "${NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "matomo",
+              "deploymentconfig": "matomo-proxy",
+              "name": "matomo-proxy",
+              "template": "matomo-template"
+            },
+            "annotations": {
+              "openshift.io/generated-by": "OpenShiftWebConsole"
+            }
+          },
+          "spec": {
+            "containers": [{
+              "name": "${NAME}",
+              "ports": [{
+                  "containerPort": 80,
+                  "protocol": "TCP"
+                },
+                {
+                  "containerPort": 8080,
+                  "protocol": "TCP"
+                }
+              ],
+              "env": []
+            }]
+          }
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "labels": {
+          "app": "fathom",
+          "name": "${NAME}"
+        }
+      },
+      "spec": {
+        "host": "${MATOMO_URL}",
+        "tls": {
+          "insecureEdgeTerminationPolicy": "Redirect",
+          "termination": "edge"
+        },
+        "to": {
+          "kind": "Service",
+          "name": "${NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "labels": {
+          "app": "matomo",
+          "service": "${NAME}",
+          "template": "matomo-template"
+        }
+      },
+      "spec": {
+        "ports": [{
+          "name": "8080-tcp",
+          "protocol": "TCP",
+          "port": 8080,
+          "targetPort": 8080
+        }],
+        "selector": {
+          "deploymentconfig": "${NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    }
+  ],
+  "parameters": [{
+      "name": "NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
+      "required": true,
+      "value": "matomo-proxy"
+    },
+    {
+      "name": "IMAGE_NAMESPACE",
+      "displayName": "Image Namespace",
+      "required": true,
+      "description": "The namespace of the OpenShift project containing the imagestream for the application.",
+      "value": "myproject"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "fathom-proxy"
+    },
+    {
+      "name": "TAG_NAME",
+      "displayName": "Environment TAG name",
+      "description": "The TAG name for this environment, e.g., dev, test, prod",
+      "required": true,
+      "value": "prod"
+    },
+    {
+      "name": "MATOMO_URL",
+      "displayName": "Fathom URL",
+      "description": "The public domain endpoint for Matomo. A value will be created by default if not specified.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "CPU_REQUEST",
+      "displayName": "Resources CPU Request",
+      "description": "The resources CPU request (in cores) for this build.",
+      "required": true,
+      "value": "100m"
+    },
+    {
+      "name": "CPU_LIMIT",
+      "displayName": "Resources CPU Limit",
+      "description": "The resources CPU limit (in cores) for this build.",
+      "required": true,
+      "value": "250m"
+    },
+    {
+      "name": "MEMORY_REQUEST",
+      "displayName": "Resources Memory Request",
+      "description": "The resources Memory request (in Mi, Gi, etc) for this build.",
+      "required": true,
+      "value": "100Mi"
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Resources Memory Limit",
+      "description": "The resources Memory limit (in Mi, Gi, etc) for this build.",
+      "required": true,
+      "value": "512Mi"
+    }
+  ]
+}

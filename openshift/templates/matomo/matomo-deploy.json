@@ -1,0 +1,184 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "matomo-template"
+  },
+  "objects": [{
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "generation": 1,
+        "labels": {
+          "app": "matomo",
+          "service": "${NAME}",
+          "template": "matomo-template"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+        "triggers": [{
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${NAME}"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "matomo",
+          "deploymentconfig": "${NAME}",
+          "template": "matomo-template"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "matomo",
+              "deploymentconfig": "matomo",
+              "template": "matomo-template"
+            }
+          },
+          "spec": {
+            "volumes": [{
+                "name": "${NAME}-source",
+                "emptyDir": {}
+              },
+              {
+                "name": "${NAME}-config",
+                "persistentVolumeClaim": {
+                  "claimName": "${NAME}-config"
+                }
+              }
+            ],
+            "containers": [{
+              "name": "${NAME}",
+              "ports": [{
+                "containerPort": 9000,
+                "protocol": "TCP"
+              }],
+              "resources": {
+                "requests": {
+                  "cpu": "${CPU_REQUEST}",
+                  "memory": "${MEMORY_REQUEST}"
+                },
+                "limits": {
+                  "cpu": "${CPU_LIMIT}",
+                  "memory": "${MEMORY_LIMIT}"
+                }
+              },
+              "volumeMounts": [{
+                  "name": "${NAME}-source",
+                  "mountPath": "/var/www/html"
+                },
+                {
+                  "name": "${NAME}-config",
+                  "mountPath": "/var/www/html/config"
+                }
+              ],
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "imagePullPolicy": "IfNotPresent"
+            }]
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "labels": {
+          "app": "matomo",
+          "service": "${NAME}",
+          "template": "matomo-template"
+        }
+      },
+      "spec": {
+        "ports": [{
+          "name": "9000-tcp",
+          "protocol": "TCP",
+          "port": 9000,
+          "targetPort": 9000
+        }],
+        "selector": {
+          "deploymentconfig": "${NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    }
+  ],
+  "parameters": [{
+      "name": "NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
+      "required": true,
+      "value": "fathom"
+    },
+    {
+      "name": "IMAGE_NAMESPACE",
+      "displayName": "Image Namespace",
+      "required": true,
+      "description": "The namespace of the OpenShift project containing the imagestream for the application.",
+      "value": "myproject"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "fathom"
+    },
+    {
+      "name": "TAG_NAME",
+      "displayName": "Environment TAG name",
+      "description": "The TAG name for this environment, e.g., dev, test, prod",
+      "required": true,
+      "value": "prod"
+    },
+    {
+      "name": "CPU_REQUEST",
+      "displayName": "Resources CPU Request",
+      "description": "The resources CPU request (in cores) for this build.",
+      "required": true,
+      "value": "100m"
+    },
+    {
+      "name": "CPU_LIMIT",
+      "displayName": "Resources CPU Limit",
+      "description": "The resources CPU limit (in cores) for this build.",
+      "required": true,
+      "value": "250m"
+    },
+    {
+      "name": "MEMORY_REQUEST",
+      "displayName": "Resources Memory Request",
+      "description": "The resources Memory request (in Mi, Gi, etc) for this build.",
+      "required": true,
+      "value": "100Mi"
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Resources Memory Limit",
+      "description": "The resources Memory limit (in Mi, Gi, etc) for this build.",
+      "required": true,
+      "value": "512Mi"
+    }
+  ]
+}
