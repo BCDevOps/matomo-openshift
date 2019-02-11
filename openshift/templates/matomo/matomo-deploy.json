@@ -36,6 +36,20 @@
                 "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               }
             }
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${NAME}-proxy"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
+                "name": "${SOURCE_IMAGE_NAME}-proxy:${TAG_NAME}"
+              }
+            }
           }
         ],
         "replicas": 1,
@@ -56,9 +70,7 @@
           "spec": {
             "volumes": [{
                 "name": "${NAME}-source",
-                "persistentVolumeClaim": {
-                  "claimName": "${NAME}-source"
-                }
+                "emptyDir": {}
               },
               {
                 "name": "${NAME}-config",
@@ -68,81 +80,128 @@
               }
             ],
             "containers": [{
-              "name": "${NAME}",
-              "ports": [{
-                "containerPort": 9000,
-                "protocol": "TCP"
-              }],
-              "resources": {
-                "requests": {
-                  "cpu": "${CPU_REQUEST}",
-                  "memory": "${MEMORY_REQUEST}"
+                "image": "${SOURCE_IMAGE_NAME}",
+                "imagePullPolicy": "Always",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 9000
+                  },
+                  "timeoutSeconds": 5
                 },
-                "limits": {
-                  "cpu": "${CPU_LIMIT}",
-                  "memory": "${MEMORY_LIMIT}"
-                }
+                "name": "matomo",
+                "ports": [{
+                  "containerPort": 9000,
+                  "protocol": "TCP"
+                }],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 9000
+                  },
+                  "timeoutSeconds": 5
+                },
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "volumeMounts": [{
+                    "mountPath": "/var/www/html",
+                    "name": "matomo-source"
+                  },
+                  {
+                    "mountPath": "/var/www/html/config",
+                    "name": "matomo-config"
+                  }
+                ]
               },
-              "volumeMounts": [{
-                  "name": "${NAME}-source",
-                  "mountPath": "/var/www/html"
+              {
+                "image": "${NAME}-proxy",
+                "imagePullPolicy": "Always",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 8080
+                  },
+                  "timeoutSeconds": 1
                 },
-                {
-                  "name": "${NAME}-config",
-                  "mountPath": "/var/www/html/config"
-                }
-              ],
-              "terminationMessagePath": "/dev/termination-log",
-              "terminationMessagePolicy": "File",
-              "imagePullPolicy": "IfNotPresent"
-            }]
+                "name": "${NAME}-proxy",
+                "ports": [{
+                  "containerPort": 8080,
+                  "protocol": "TCP"
+                }],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "initialDelaySeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 8080
+                  },
+                  "timeoutSeconds": 1
+                },
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "volumeMounts": [{
+                  "mountPath": "/var/www/html",
+                  "name": "matomo-source"
+                }]
+              }
+            ]
           }
         }
       }
     },
     {
-        "kind": "PersistentVolumeClaim",
-        "apiVersion": "v1",
-        "metadata": {
-            "name": "${NAME}-config",
-            "labels": {
-              "app": "matomo",
-              "name": "${NAME}"
-            }
-        },
-        "spec": {
-            "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
-            "accessModes": [
-                "ReadWriteOnce"
-            ],
-            "resources": {
-                "requests": {
-                    "storage": "${CONFIG_PERSISTENT_VOLUME_SIZE}"
-                }
-            }
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-config",
+        "labels": {
+          "app": "matomo",
+          "name": "${NAME}"
         }
+      },
+      "spec": {
+        "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${PERSISTENT_VOLUME_SIZE}"
+          }
+        }
+      }
     },
     {
-        "kind": "PersistentVolumeClaim",
-        "apiVersion": "v1",
-        "metadata": {
-            "name": "${NAME}-source",
-            "labels": {
-              "app": "matomo",
-              "name": "${NAME}"
-            }
-        },
-        "spec": {
-            "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
-            "accessModes": [
-                "ReadWriteMany"
-            ],
-            "resources": {
-                "requests": {
-                    "storage": "${SOURCE_PERSISTENT_VOLUME_SIZE}"
-                }
-            }
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "labels": {
+          "app": "${NAME}",
+          "name": "${NAME}"
         }
+      },
+      "spec": {
+        "host": "${MATOMO_URL}",
+        "tls": {
+          "insecureEdgeTerminationPolicy": "Redirect",
+          "termination": "edge"
+        },
+        "to": {
+          "kind": "Service",
+          "name": "${NAME}"
+        }
+      }
     },
     {
       "kind": "Service",
@@ -157,10 +216,10 @@
       },
       "spec": {
         "ports": [{
-          "name": "9000-tcp",
+          "name": "8080-tcp",
+          "port": 8080,
           "protocol": "TCP",
-          "port": 9000,
-          "targetPort": 9000
+          "targetPort": 8080
         }],
         "selector": {
           "deploymentconfig": "${NAME}"
@@ -199,25 +258,25 @@
       "value": "prod"
     },
     {
-        "name": "CONFIG_PERSISTENT_VOLUME_SIZE",
-        "displayName": "Persistent Volume Size",
-        "description": "The size of the persistent volume containing the Matomo configuration, e.g. 512Mi, 1Gi, 2Gi.",
-        "required": true,
-        "value": "1Gi"
+      "name": "MATOMO_URL",
+      "displayName": "Matomo URL",
+      "description": "The public domain endpoint for Matomo. A value will be created by default if not specified.",
+      "required": false,
+      "value": ""
     },
     {
-        "name": "SOURCE_PERSISTENT_VOLUME_SIZE",
-        "displayName": "Persistent Volume Size",
-        "description": "The size of the persistent volume containing the Matomo files to be shared with the proxy, e.g. 512Mi, 1Gi, 2Gi.",
-        "required": true,
-        "value": "1Gi"
+      "name": "PERSISTENT_VOLUME_SIZE",
+      "displayName": "Persistent Volume Size",
+      "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
+      "required": true,
+      "value": "1Gi"
     },
     {
-        "name": "PERSISTENT_VOLUME_CLASS",
-        "displayName": "Persistent Volume Class name",
-        "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
-        "required": false,
-        "value": "gluster-file"
+      "name": "PERSISTENT_VOLUME_CLASS",
+      "displayName": "Persistent Volume Class name",
+      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+      "required": false,
+      "value": "gluster-file"
     },
     {
       "name": "CPU_REQUEST",
