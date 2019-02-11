@@ -56,7 +56,9 @@
           "spec": {
             "volumes": [{
                 "name": "${NAME}-source",
-                "emptyDir": {}
+                "persistentVolumeClaim": {
+                  "claimName": "${NAME}-source"
+                }
               },
               {
                 "name": "${NAME}-config",
@@ -115,7 +117,29 @@
             ],
             "resources": {
                 "requests": {
-                    "storage": "${PERSISTENT_VOLUME_SIZE}"
+                    "storage": "${CONFIG_PERSISTENT_VOLUME_SIZE}"
+                }
+            }
+        }
+    },
+    {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${NAME}-source",
+            "labels": {
+              "app": "matomo",
+              "name": "${NAME}"
+            }
+        },
+        "spec": {
+            "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
+            "accessModes": [
+                "ReadWriteMany"
+            ],
+            "resources": {
+                "requests": {
+                    "storage": "${SOURCE_PERSISTENT_VOLUME_SIZE}"
                 }
             }
         }
@@ -175,9 +199,16 @@
       "value": "prod"
     },
     {
-        "name": "PERSISTENT_VOLUME_SIZE",
+        "name": "CONFIG_PERSISTENT_VOLUME_SIZE",
         "displayName": "Persistent Volume Size",
-        "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
+        "description": "The size of the persistent volume containing the Matomo configuration, e.g. 512Mi, 1Gi, 2Gi.",
+        "required": true,
+        "value": "1Gi"
+    },
+    {
+        "name": "SOURCE_PERSISTENT_VOLUME_SIZE",
+        "displayName": "Persistent Volume Size",
+        "description": "The size of the persistent volume containing the Matomo files to be shared with the proxy, e.g. 512Mi, 1Gi, 2Gi.",
         "required": true,
         "value": "1Gi"
     },

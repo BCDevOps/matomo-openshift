@@ -55,6 +55,13 @@
             }
           },
           "spec": {
+            "volumes": [{
+                "name": "${NAME}-source",
+                "persistentVolumeClaim": {
+                  "claimName": "${NAME}-source"
+                }
+              }
+            ],
             "containers": [{
               "name": "${NAME}",
               "ports": [{
@@ -66,11 +73,39 @@
                   "protocol": "TCP"
                 }
               ],
+              "volumeMounts": [{
+                  "name": "${NAME}-source",
+                  "mountPath": "/var/www/html",
+                  "readOnly": true
+                }
+              ],
               "env": []
             }]
           }
         }
       }
+    },
+    {
+        "kind": "PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${NAME}-source",
+            "labels": {
+              "app": "matomo",
+              "name": "${NAME}"
+            }
+        },
+        "spec": {
+            "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
+            "accessModes": [
+                "ReadWriteMany"
+            ],
+            "resources": {
+                "requests": {
+                    "storage": "${SOURCE_PERSISTENT_VOLUME_SIZE}"
+                }
+            }
+        }
     },
     {
       "kind": "Route",
@@ -154,6 +189,20 @@
       "description": "The public domain endpoint for Matomo. A value will be created by default if not specified.",
       "required": false,
       "value": ""
+    },
+    {
+        "name": "SOURCE_PERSISTENT_VOLUME_SIZE",
+        "displayName": "Persistent Volume Size",
+        "description": "The size of the persistent volume containing the files shared with the Matomo service, e.g. 512Mi, 1Gi, 2Gi.",
+        "required": true,
+        "value": "1Gi"
+    },
+    {
+        "name": "PERSISTENT_VOLUME_CLASS",
+        "displayName": "Persistent Volume Class name",
+        "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+        "required": false,
+        "value": "gluster-file"
     },
     {
       "name": "CPU_REQUEST",
