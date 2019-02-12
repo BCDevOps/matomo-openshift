@@ -3,17 +3,15 @@ This is a set of OpenShift configurations to set up an instance of the Matomo we
 
 ## Architecture
 The service is composed by the following components:
-- *matomo*: the main analytics service.
+- *matomo*: includes two pods under the same name, the `matomo` analytics instance and `matomo-proxy`, which is the nginx used to proxy http requests.
 - *matomo-db*: a [mariadb](https://mariadb.org) instance that will be used to store the analytics data.
-- *matomo-proxy*: the [nginx](https://www.nginx.com) service used as reverse-proxy
 
 ## Deployment / Configuration
 The templates provided in the `openshift` folder include everything that is necessary to create the required builds and deployments.
 
 Since there are interdependencies between deployment configurations, please make sure to follow this order when creating them for the first time:
 1) build and deploy the database
-2) build and deploy the Matomo analytics server
-3) build and deploy the proxy
+2) build and deploy the Matomo analytics server and proxy
 
 The scripts in [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools) can be used to manage the builds and deployments.
 
