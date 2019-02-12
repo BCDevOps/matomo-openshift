@@ -3,7 +3,7 @@ This is a set of OpenShift configurations to set up an instance of the Matomo we
 
 ## Architecture
 The service is composed by the following components:
-- *matomo*: includes two pods under the same name, the `matomo` analytics instance and `matomo-proxy`, which is the nginx used to proxy http requests.
+- *matomo*: includes two containers within a single pod, the matomo analytics instance and matomo-proxy, which is the nginx used to proxy http requests.
 - *matomo-db*: a [mariadb](https://mariadb.org) instance that will be used to store the analytics data.
 
 ## Deployment / Configuration
