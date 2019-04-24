@@ -293,7 +293,7 @@
           "description": "Username for MariaDB user that will be used for accessing the database.  Needs to be base64 encoded/",
           "required": true,
           "generate": "expression",
-          "from": "[a-zA-Z_][a-zA-Z0-9_]{10}"
+          "from": "[a-zA-Z0-9]{10}"
       },
       {
           "name": "MYSQL_PASSWORD",
@@ -301,7 +301,7 @@
           "description": "Password for the MariaDB connection user.  Needs to be base64 encoded/",
           "required": true,
           "generate": "expression",
-          "from": "[a-zA-Z0-9_~!@#$%^&*()-=<>,.?;:|]{16}"
+          "from": "[a-zA-Z0-9]{10}"
       },
       {
           "name": "MYSQL_ROOT_PASSWORD",
@@ -309,7 +309,7 @@
           "description": "Password for the MariaDB administrative account.  Needs to be base64 encoded.",
           "required": true,
           "generate": "expression",
-          "from": "[a-zA-Z0-9_~!@#$%^&*()-=<>,.?;:|]{16}"
+          "from": "[a-zA-Z0-9]{16}"
       },
       {
           "name": "MOUNT_PATH",
