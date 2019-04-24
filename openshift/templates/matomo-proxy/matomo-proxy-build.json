@@ -69,7 +69,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/bcgov/matomo-openshift.git"
+      "value": "https://github.com/bcdevops/matomo-openshift.git"
     },
     {
       "name": "GIT_REF",
