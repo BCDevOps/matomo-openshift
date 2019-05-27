@@ -1,5 +1,22 @@
-# matomo-openshift
-This is a set of OpenShift configurations to set up an instance of the Matomo web analytics server. See: [matomo.org](https://matomo.org/).
+---
+title: Matomo OpenShift
+description: Documentation and resources required to deploy a Matomo web analytics server instance into an OpenShift environment.  Matomo is a fully featured web analytics server and is a great alternative to Google Analytics when data ownership and privacy compliance are a concern.
+author: esune
+resourceType: Components
+personas: 
+  - Developer
+  - Product Owner
+  - Designer
+labels:
+  - matomo
+  - google
+  - analytics
+  - web
+---
+# Matomo OpenShift
+Matomo is a fully featured web analytics server and is a great alternative to Google Analytics when data ownership and privacy compliance are a concern.
+
+[Matomo OpenShift](https://github.com/BCDevOps/matomo-openshift) provides a set of OpenShift configurations to set up an instance of the Matomo web analytics server. See: [matomo.org](https://matomo.org/) for additional details regarding Matomo.
 
 ## Architecture
 The service is composed by the following components:
