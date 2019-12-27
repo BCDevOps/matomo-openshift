@@ -1,6 +1,6 @@
 ---
 title: Matomo OpenShift
-description: Documentation and resources required to deploy a Matomo web analytics server instance into an OpenShift environment.  Matomo is a fully featured web analytics server and is a great alternative to Google Analytics when data ownership and privacy compliance are a concern.
+description: Get started with docs and resources for Matomo, a fully featured web analytics server. It's a great alternative to Google Analytics when data ownership and privacy compliance are a concern.
 author: esune
 resourceType: Components
 personas: 
