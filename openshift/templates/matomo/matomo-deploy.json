@@ -2,16 +2,20 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "matomo-template"
+    "name": "${NAME}-template",
+    "labels": {
+      "name": "${NAME}${NAME}-template",
+      "app": "${APP_NAME}"
+    }
   },
   "objects": [{
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
         "name": "${NAME}",
-        "generation": 1,
         "labels": {
-          "app": "matomo",
+          "name": "${NAME}",
+          "app": "${APP_NAME}",
           "service": "${NAME}",
           "template": "matomo-template"
         }
@@ -55,16 +59,17 @@
         "replicas": 1,
         "test": false,
         "selector": {
-          "app": "matomo",
+          "app": "${NAME}",
           "deploymentconfig": "${NAME}",
-          "template": "matomo-template"
+          "template": "${NAME}-template"
         },
         "template": {
           "metadata": {
             "labels": {
-              "app": "matomo",
+              "name": "${NAME}",
+              "app": "${APP_NAME}",
               "deploymentconfig": "matomo",
-              "template": "matomo-template"
+              "template": "${NAME}-template"
             }
           },
           "spec": {
@@ -165,8 +170,8 @@
       "metadata": {
         "name": "${NAME}-config",
         "labels": {
-          "app": "matomo",
-          "name": "${NAME}"
+          "name": "${NAME}-config",
+          "app": "${APP_NAME}"
         }
       },
       "spec": {
@@ -187,8 +192,8 @@
       "metadata": {
         "name": "${NAME}",
         "labels": {
-          "app": "${NAME}",
-          "name": "${NAME}"
+          "name": "${NAME}",
+          "app": "${APP_NAME}"
         }
       },
       "spec": {
@@ -209,7 +214,8 @@
       "metadata": {
         "name": "${NAME}",
         "labels": {
-          "app": "matomo",
+          "name": "${NAME}",
+          "app": "${APP_NAME}",
           "service": "${NAME}",
           "template": "matomo-template"
         }
@@ -233,6 +239,13 @@
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
+      "required": true,
+      "value": "matomo"
+    },
+    {
+      "name": "APP_NAME",
+      "displayName": "App Name",
+      "description": "Used to group components together in the OpenShift console.",
       "required": true,
       "value": "matomo"
     },

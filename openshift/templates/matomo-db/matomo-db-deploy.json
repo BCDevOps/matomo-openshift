@@ -6,7 +6,11 @@
           "description": "Deployment template for a mariadb server with persistent storage.",
           "tags": "${NAME}"
       },
-      "name": "${NAME}-persistent-template"
+      "name": "${NAME}-persistent-template",
+      "labels": {
+        "name": "${NAME}-persistent-template",
+        "app": "${APP_NAME}"
+      }
   },
   "objects": [
       {
@@ -14,12 +18,12 @@
           "apiVersion": "v1",
           "metadata": {
               "name": "${NAME}",
-              "generation": 1,
               "labels": {
-                  "app": "matomo",
-                  "service": "${NAME}",
-                  "template": "matomo-template"
-              }
+                "name": "${NAME}",
+                "app": "${APP_NAME}",
+                "service": "${NAME}",
+                "template": "matomo-template"
+            }
           },
           "spec": {
               "strategy": {
@@ -57,7 +61,8 @@
               "template": {
                   "metadata": {
                       "labels": {
-                          "name": "${NAME}"
+                        "name": "${NAME}",
+                        "app": "${APP_NAME}"
                       }
                   },
                   "spec": {
@@ -186,8 +191,8 @@
           "metadata": {
               "name": "${NAME}",
               "labels": {
-                "app": "matomo",
-                "name": "${NAME}"
+                "name": "${NAME}",
+                "app": "${APP_NAME}"
               }
           },
           "spec": {
@@ -208,8 +213,8 @@
           "metadata": {
               "name": "${NAME}",
               "labels": {
-                "app": "matomo",
-                "name": "${NAME}"
+                "name": "${NAME}",
+                "app": "${APP_NAME}"
               }
           },
           "stringData": {
@@ -226,9 +231,10 @@
           "metadata": {
               "name": "${NAME}",
               "labels": {
-                  "app": "matomo",
-                  "service": "${NAME}",
-                  "template": "matomo-template"
+                "name": "${NAME}",
+                "app": "${APP_NAME}",
+                "service": "${NAME}",
+                "template": "matomo-template"
               },
               "annotations": {
                   "template.openshift.io/expose-uri": "mysql://{.spec.clusterIP}:{.spec.ports[?(.name==\"mariadb\")].port}"
@@ -258,6 +264,13 @@
           "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
           "required": true,
           "value": "matomo-db"
+      },
+      {
+        "name": "APP_NAME",
+        "displayName": "App Name",
+        "description": "Used to group components together in the OpenShift console.",
+        "required": true,
+        "value": "matomo"
       },
       {
           "name": "IMAGE_NAMESPACE",
