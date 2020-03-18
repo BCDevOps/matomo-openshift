@@ -97,7 +97,7 @@ while [ ${OPTIND} -le $# ]; do
   else
     argument=$(echo "${!OPTIND}" | tr '[:upper:]' '[:lower:]')
     case "${argument}" in
-      init|build|deploy|clean|scaleup|scaledown|recycle)
+      init|build|deploy|clean|delete|scaleup|scaledown|recycle)
         _cmd=${argument}
         ;;
       *)
@@ -262,6 +262,14 @@ deleteResources()
   )
 }
 
+cleanResources()
+{
+  (
+    _appName=${1:-matomo}
+    oc -n $(getProjectName) delete all,configmap -l app=${_appName}
+  )
+}
+
 initialize(){
   echo -e "\nInitializing environment settings ...\n"
 
@@ -300,6 +308,11 @@ case "${_cmd}" in
     ;;
 
   clean)
+    appName=${1:-matomo}
+    cleanResources ${appName}
+    ;;
+
+  delete)
     appName=${1:-matomo}
     deleteResources ${appName}
     ;;
