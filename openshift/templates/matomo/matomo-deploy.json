@@ -2,16 +2,21 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "matomo-template"
+    "name": "${NAME}-template",
+    "labels": {
+      "name": "${NAME}${NAME}-template",
+      "app": "${APP_NAME}"
+    }
   },
-  "objects": [{
+  "objects": [
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
         "name": "${NAME}",
-        "generation": 1,
         "labels": {
-          "app": "matomo",
+          "name": "${NAME}",
+          "app": "${APP_NAME}",
           "service": "${NAME}",
           "template": "matomo-template"
         }
@@ -20,7 +25,8 @@
         "strategy": {
           "type": "Rolling"
         },
-        "triggers": [{
+        "triggers": [
+          {
             "type": "ConfigChange"
           },
           {
@@ -55,20 +61,22 @@
         "replicas": 1,
         "test": false,
         "selector": {
-          "app": "matomo",
+          "app": "${NAME}",
           "deploymentconfig": "${NAME}",
-          "template": "matomo-template"
+          "template": "${NAME}-template"
         },
         "template": {
           "metadata": {
             "labels": {
-              "app": "matomo",
+              "name": "${NAME}",
+              "app": "${APP_NAME}",
               "deploymentconfig": "matomo",
-              "template": "matomo-template"
+              "template": "${NAME}-template"
             }
           },
           "spec": {
-            "volumes": [{
+            "volumes": [
+              {
                 "name": "${NAME}-source",
                 "emptyDir": {}
               },
@@ -79,7 +87,8 @@
                 }
               }
             ],
-            "containers": [{
+            "containers": [
+              {
                 "image": "${SOURCE_IMAGE_NAME}",
                 "imagePullPolicy": "Always",
                 "livenessProbe": {
@@ -93,10 +102,12 @@
                   "timeoutSeconds": 5
                 },
                 "name": "matomo",
-                "ports": [{
-                  "containerPort": 9000,
-                  "protocol": "TCP"
-                }],
+                "ports": [
+                  {
+                    "containerPort": 9000,
+                    "protocol": "TCP"
+                  }
+                ],
                 "readinessProbe": {
                   "failureThreshold": 3,
                   "initialDelaySeconds": 1,
@@ -109,7 +120,8 @@
                 },
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
-                "volumeMounts": [{
+                "volumeMounts": [
+                  {
                     "mountPath": "/var/www/html",
                     "name": "matomo-source"
                   },
@@ -133,10 +145,12 @@
                   "timeoutSeconds": 1
                 },
                 "name": "${NAME}-proxy",
-                "ports": [{
-                  "containerPort": 8080,
-                  "protocol": "TCP"
-                }],
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
                 "readinessProbe": {
                   "failureThreshold": 3,
                   "initialDelaySeconds": 1,
@@ -149,10 +163,12 @@
                 },
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
-                "volumeMounts": [{
-                  "mountPath": "/var/www/html",
-                  "name": "matomo-source"
-                }]
+                "volumeMounts": [
+                  {
+                    "mountPath": "/var/www/html",
+                    "name": "matomo-source"
+                  }
+                ]
               }
             ]
           }
@@ -165,8 +181,8 @@
       "metadata": {
         "name": "${NAME}-config",
         "labels": {
-          "app": "matomo",
-          "name": "${NAME}"
+          "name": "${NAME}-config",
+          "app": "${APP_NAME}"
         }
       },
       "spec": {
@@ -187,8 +203,8 @@
       "metadata": {
         "name": "${NAME}",
         "labels": {
-          "app": "${NAME}",
-          "name": "${NAME}"
+          "name": "${NAME}",
+          "app": "${APP_NAME}"
         }
       },
       "spec": {
@@ -204,23 +220,42 @@
       }
     },
     {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-admin",
+        "labels": {
+          "name": "${NAME}-admin",
+          "app": "${APP_NAME}"
+        }
+      },
+      "stringData": {
+        "username": "${MATOMO_ADMIN_USER}",
+        "password": "${MATOMO_ADMIN_PASSWORD}"
+      },
+      "type": "Opaque"
+    },
+    {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
         "name": "${NAME}",
         "labels": {
-          "app": "matomo",
+          "name": "${NAME}",
+          "app": "${APP_NAME}",
           "service": "${NAME}",
           "template": "matomo-template"
         }
       },
       "spec": {
-        "ports": [{
-          "name": "8080-tcp",
-          "port": 8080,
-          "protocol": "TCP",
-          "targetPort": 8080
-        }],
+        "ports": [
+          {
+            "name": "8080-tcp",
+            "port": 8080,
+            "protocol": "TCP",
+            "targetPort": 8080
+          }
+        ],
         "selector": {
           "deploymentconfig": "${NAME}"
         },
@@ -229,10 +264,18 @@
       }
     }
   ],
-  "parameters": [{
+  "parameters": [
+    {
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
+      "required": true,
+      "value": "matomo"
+    },
+    {
+      "name": "APP_NAME",
+      "displayName": "App Name",
+      "description": "Used to group components together in the OpenShift console.",
       "required": true,
       "value": "matomo"
     },
@@ -258,6 +301,21 @@
       "value": "prod"
     },
     {
+      "name": "MATOMO_ADMIN_USER",
+      "displayName": "Matomo Admin Username",
+      "description": "Admin Username for Matomo",
+      "required": true,
+      "value": "admin"
+    },
+    {
+      "name": "MATOMO_ADMIN_PASSWORD",
+      "displayName": "Matomo Admin Password",
+      "description": "Password for the Matomo Admin user.",
+      "required": true,
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
+    },
+    {
       "name": "MATOMO_URL",
       "displayName": "Matomo URL",
       "description": "The public domain endpoint for Matomo. A value will be created by default if not specified.",
@@ -274,9 +332,9 @@
     {
       "name": "PERSISTENT_VOLUME_CLASS",
       "displayName": "Persistent Volume Class name",
-      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db, netapp-file-standard, netapp-block-standard",
       "required": false,
-      "value": "gluster-file"
+      "value": "netapp-file-standard"
     },
     {
       "name": "CPU_REQUEST",
