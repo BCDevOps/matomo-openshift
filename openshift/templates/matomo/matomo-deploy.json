@@ -220,6 +220,22 @@
       }
     },
     {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-admin",
+        "labels": {
+          "name": "${NAME}-admin",
+          "app": "${APP_NAME}"
+        }
+      },
+      "stringData": {
+        "username": "${MATOMO_ADMIN_USER}",
+        "password": "${MATOMO_ADMIN_PASSWORD}"
+      },
+      "type": "Opaque"
+    },
+    {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
@@ -283,6 +299,21 @@
       "description": "The TAG name for this environment, e.g., dev, test, prod",
       "required": true,
       "value": "prod"
+    },
+    {
+      "name": "MATOMO_ADMIN_USER",
+      "displayName": "Matomo Admin Username",
+      "description": "Admin Username for Matomo",
+      "required": true,
+      "value": "admin"
+    },
+    {
+      "name": "MATOMO_ADMIN_PASSWORD",
+      "displayName": "Matomo Admin Password",
+      "description": "Password for the Matomo Admin user.",
+      "required": true,
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
     },
     {
       "name": "MATOMO_URL",
