@@ -8,7 +8,8 @@
       "app": "${APP_NAME}"
     }
   },
-  "objects": [{
+  "objects": [
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
@@ -24,7 +25,8 @@
         "strategy": {
           "type": "Rolling"
         },
-        "triggers": [{
+        "triggers": [
+          {
             "type": "ConfigChange"
           },
           {
@@ -73,7 +75,8 @@
             }
           },
           "spec": {
-            "volumes": [{
+            "volumes": [
+              {
                 "name": "${NAME}-source",
                 "emptyDir": {}
               },
@@ -84,7 +87,8 @@
                 }
               }
             ],
-            "containers": [{
+            "containers": [
+              {
                 "image": "${SOURCE_IMAGE_NAME}",
                 "imagePullPolicy": "Always",
                 "livenessProbe": {
@@ -98,10 +102,12 @@
                   "timeoutSeconds": 5
                 },
                 "name": "matomo",
-                "ports": [{
-                  "containerPort": 9000,
-                  "protocol": "TCP"
-                }],
+                "ports": [
+                  {
+                    "containerPort": 9000,
+                    "protocol": "TCP"
+                  }
+                ],
                 "readinessProbe": {
                   "failureThreshold": 3,
                   "initialDelaySeconds": 1,
@@ -114,7 +120,8 @@
                 },
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
-                "volumeMounts": [{
+                "volumeMounts": [
+                  {
                     "mountPath": "/var/www/html",
                     "name": "matomo-source"
                   },
@@ -138,10 +145,12 @@
                   "timeoutSeconds": 1
                 },
                 "name": "${NAME}-proxy",
-                "ports": [{
-                  "containerPort": 8080,
-                  "protocol": "TCP"
-                }],
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
                 "readinessProbe": {
                   "failureThreshold": 3,
                   "initialDelaySeconds": 1,
@@ -154,10 +163,12 @@
                 },
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
-                "volumeMounts": [{
-                  "mountPath": "/var/www/html",
-                  "name": "matomo-source"
-                }]
+                "volumeMounts": [
+                  {
+                    "mountPath": "/var/www/html",
+                    "name": "matomo-source"
+                  }
+                ]
               }
             ]
           }
@@ -221,12 +232,14 @@
         }
       },
       "spec": {
-        "ports": [{
-          "name": "8080-tcp",
-          "port": 8080,
-          "protocol": "TCP",
-          "targetPort": 8080
-        }],
+        "ports": [
+          {
+            "name": "8080-tcp",
+            "port": 8080,
+            "protocol": "TCP",
+            "targetPort": 8080
+          }
+        ],
         "selector": {
           "deploymentconfig": "${NAME}"
         },
@@ -235,7 +248,8 @@
       }
     }
   ],
-  "parameters": [{
+  "parameters": [
+    {
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",

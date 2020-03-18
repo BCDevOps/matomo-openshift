@@ -8,7 +8,8 @@
       "app": "${APP_NAME}"
     }
   },
-  "objects": [{
+  "objects": [
+    {
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
@@ -60,13 +61,16 @@
             "memory": "${MEMORY_LIMIT}"
           }
         },
-        "triggers": [{
-          "type": "ConfigChange"
-        }]
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ]
       }
     }
   ],
-  "parameters": [{
+  "parameters": [
+    {
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the objects defined in this template.",
