@@ -112,6 +112,7 @@ done
 # Pass the unrecognized arguments along for further processing ...
 shift $((OPTIND-1))
 set -- "$@" $(echo -e "${pass}" | sed -e 's/^[[:space:]]*//')
+
 # -----------------------------------------------------------------------------------------------------------------
 # Define hook scripts:
 # - These must be defined before the main settings script 'settings.sh' is loaded.
@@ -176,10 +177,11 @@ onRequiredOptionsExist() {
 
 onUsesCommandLineArguments() {
   (
-    # This script is expecting command line arguments to be passed ...
+    # This script is not expecting command line arguments to be passed ...
     return 1
   )
 }
+
 # -----------------------------------------------------------------------------------------------------------------
 # Initialization:
 # -----------------------------------------------------------------------------------------------------------------
@@ -275,7 +277,7 @@ initialize(){
 
   # Write a local settings file ...
   echo "Writing local settings file (settings.local.sh) ..."
-  echo "export PROJECT_NAMESPACE=${PROJECT_NAMESPACE}" > settings.local.sh
+  echo "export PROJECT_NAMESPACE=\${PROJECT_NAMESPACE:-${PROJECT_NAMESPACE}}" > settings.local.sh
   echo "export GIT_URI=${GIT_URI}" >> settings.local.sh
   echo "export GIT_REF=${GIT_REF}" >> settings.local.sh
 
