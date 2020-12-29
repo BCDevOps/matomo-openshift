@@ -9,7 +9,10 @@
     "name": "${NAME}-persistent-template",
     "labels": {
       "name": "${NAME}-persistent-template",
-      "app": "${APP_NAME}"
+      "app": "${APP_NAME}",
+      "app-group": "${APP_GROUP}",
+      "role": "${ROLE}",
+      "env": "${TAG_NAME}"
     }
   },
   "objects": [
@@ -22,7 +25,10 @@
           "name": "${NAME}",
           "app": "${APP_NAME}",
           "service": "${NAME}",
-          "template": "matomo-template"
+          "template": "matomo-template",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -62,7 +68,10 @@
           "metadata": {
             "labels": {
               "name": "${NAME}",
-              "app": "${APP_NAME}"
+              "app": "${APP_NAME}",
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
@@ -192,7 +201,10 @@
         "name": "${NAME}",
         "labels": {
           "name": "${NAME}",
-          "app": "${APP_NAME}"
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -214,7 +226,10 @@
         "name": "${NAME}",
         "labels": {
           "name": "${NAME}",
-          "app": "${APP_NAME}"
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "stringData": {
@@ -234,7 +249,10 @@
           "name": "${NAME}",
           "app": "${APP_NAME}",
           "service": "${NAME}",
-          "template": "matomo-template"
+          "template": "matomo-template",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         },
         "annotations": {
           "template.openshift.io/expose-uri": "mysql://{.spec.clusterIP}:{.spec.ports[?(.name==\"mariadb\")].port}"

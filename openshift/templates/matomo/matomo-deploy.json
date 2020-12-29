@@ -5,7 +5,10 @@
     "name": "${NAME}-template",
     "labels": {
       "name": "${NAME}${NAME}-template",
-      "app": "${APP_NAME}"
+      "app": "${APP_NAME}",
+      "app-group": "${APP_GROUP}",
+      "role": "${ROLE}",
+      "env": "${TAG_NAME}"
     }
   },
   "objects": [
@@ -18,7 +21,10 @@
           "name": "${NAME}",
           "app": "${APP_NAME}",
           "service": "${NAME}",
-          "template": "matomo-template"
+          "template": "matomo-template",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -71,7 +77,10 @@
               "name": "${NAME}",
               "app": "${APP_NAME}",
               "deploymentconfig": "matomo",
-              "template": "${NAME}-template"
+              "template": "${NAME}-template",
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
@@ -215,7 +224,10 @@
         "name": "${NAME}-config",
         "labels": {
           "name": "${NAME}-config",
-          "app": "${APP_NAME}"
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -237,7 +249,10 @@
         "name": "${NAME}",
         "labels": {
           "name": "${NAME}",
-          "app": "${APP_NAME}"
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -259,7 +274,10 @@
         "name": "${NAME}-admin",
         "labels": {
           "name": "${NAME}-admin",
-          "app": "${APP_NAME}"
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "stringData": {
@@ -277,7 +295,10 @@
           "name": "${NAME}",
           "app": "${APP_NAME}",
           "service": "${NAME}",
-          "template": "matomo-template"
+          "template": "matomo-template",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
