@@ -198,7 +198,7 @@
         }
       },
       "spec": {
-        "description": "Allow the controller to talk to either the database or agent micro services.\n",
+        "description": "Allow matomo to talk to the database.\n",
         "source": [
           [
             "role=${ROLE}",
@@ -352,14 +352,14 @@
       "displayName": "Namespace Name",
       "description": "The name of the namespace being deployed to..",
       "required": true,
-      "value": "4a9599"
+      "value": "myproject"
     },
     {
       "name": "ROLE",
       "displayName": "Role",
       "description": "The role of this service within the application - used for Network Policies",
       "required": true,
-      "value": "controller"
+      "value": "matomo"
     },
     {
       "name": "SUFFIX",

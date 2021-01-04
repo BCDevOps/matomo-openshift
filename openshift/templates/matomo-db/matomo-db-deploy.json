@@ -316,7 +316,7 @@
       "displayName": "Namespace Name",
       "description": "The name of the namespace being deployed to..",
       "required": true,
-      "value": "4a9599"
+      "value": "myproject"
     },
     {
       "name": "ROLE",
