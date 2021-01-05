@@ -233,7 +233,7 @@
       "spec": {
         "storageClassName": "${PERSISTENT_VOLUME_CLASS}",
         "accessModes": [
-          "ReadWriteOnce"
+          "ReadWriteMany"
         ],
         "resources": {
           "requests": {
