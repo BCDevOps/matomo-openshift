@@ -42,7 +42,14 @@
         "strategy": {
           "type": "Docker",
           "dockerStrategy": {
-            "dockerfilePath": "${DOCKER_FILE_PATH}"
+            "dockerfilePath": "${DOCKER_FILE_PATH}",
+            "pullSecret":{
+              "name":"${ARTIFACTORY_CREDS}"
+            },
+            "env":[
+              {"name":"BUILD_LOGLEVEL", "value":"2"},
+              {"name":"NPM_CONFIG_LOGLEVEL", "value":"notice"}
+            ]
           }
         },
         "output": {
@@ -83,6 +90,13 @@
       "description": "Used to group components together in the OpenShift console.",
       "required": true,
       "value": "matomo"
+    },
+    {
+      "name": "ARTIFACTORY_CREDS",
+      "displayName": "Artifactory-Creds",
+      "description": "the artifactory pull cred",
+      "required": true,
+      "value": "artifactory-creds"
     },
     {
       "name": "GIT_REPO_URL",
