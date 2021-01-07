@@ -24,19 +24,31 @@ The service is composed by the following components:
 - *matomo-db*: a [mariadb](https://mariadb.org) instance that will be used to store the analytics data.
 
 ## Deployment / Configuration
-The templates provided in the `openshift` folder include everything that is necessary to create the required builds and deployments.
+The templates provided in the `openshift` folder include everything that is necessary to create the required builds and deployments.  
 
-Since there are interdependencies between deployment configurations, please make sure to follow this order when creating them for the first time:
-1) build and deploy the database
-2) build and deploy the Matomo analytics server and proxy
+In order to run Fathom on the openshift cluster, you MUST install [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools) and [Artifactory](https://github.com/BCDevOps/OpenShift4-Migration/issues/51)  
 
-The [manage](./openshift/manage) script makes the process of adding a matomo instance to your project very easy.  The script was build on the [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools) scripts.
+There should already be a "artifacts-default-******" secret in the tools environment of your openshift cluster. Copy the username and password of this 
+secret and run the following command in each environment you wish to build/deploy to. (example: tools and dev / tools and prod)
+~~~
+oc create secret docker-registry artifactory-creds \
+    --docker-server=docker-remote.artifacts.developer.gov.bc.ca \
+    --docker-username=<our username from secret> \
+    --docker-password=<our password from secret> \
+    --docker-email=unused
+oc secrets link default artifactory-creds --for=pull
+oc secrets link builder artifactory-creds
+~~~  
+  
+The [manage](./openshift/manage) script makes the process of adding a matomo instance to your project very easy. The script was build on the [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools) scripts.
 
 Once you've cloned the repository, open a bash shell (Git Bash for example) to the `openshift` directory of the working copy.
 
 The following example assumes an OpenShift project set named **ggpixq** ...
 
-1. `./manage -n ggpixq init` - to initialize the configurations to be deployed into your project.
+1. `./manage -n ggpixq init` - to initialize the configurations to be deployed into your project.  
+This will generate local param files, make sure to go through each of the param files, uncomment NAMESPACE_NAME, and set it to your project namespace. In this case, ggpixq.  
+next we can build and deploy
 1. `./manage build` - to publish the build configuration(s) into your `tools` project and start the build.
 1. `./manage -e prod deploy` - to publish the deployment configuration(s) into your `prod` environment and tag the application images to start the deployments.
 1. Browse to the deployed application to complete the configuration.
