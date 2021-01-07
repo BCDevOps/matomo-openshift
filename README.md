@@ -26,7 +26,7 @@ The service is composed by the following components:
 ## Deployment / Configuration
 The templates provided in the `openshift` folder include everything that is necessary to create the required builds and deployments.  
 
-In order to run Fathom on the openshift cluster, you MUST install [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools) and [Artifactory](https://github.com/BCDevOps/OpenShift4-Migration/issues/51)  
+In order to run Fathom on the openshift cluster, you MUST install [openshift-developer-tools](https://github.com/BCDevOps/openshift-developer-tools)  
 
 There should already be a "artifacts-default-******" secret in the tools environment of your openshift cluster. Copy the username and password of this 
 secret and run the following command in each environment you wish to build/deploy to. (example: tools and dev / tools and prod)
