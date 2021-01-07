@@ -43,13 +43,13 @@
           "type": "Docker",
           "dockerStrategy": {
             "dockerfilePath": "${DOCKER_FILE_PATH}",
-            "pullSecret":{
-              "name":"${ARTIFACTORY_CREDS}"
+            "from":{
+              "kind":"DockerImage",
+              "name":"${DOCKER_REG}nginx:stable"
             },
-            "env":[
-              {"name":"BUILD_LOGLEVEL", "value":"2"},
-              {"name":"NPM_CONFIG_LOGLEVEL", "value":"notice"}
-            ]
+            "pullSecret":{
+              "name":"${PULL_CREDS}"
+            }
           }
         },
         "output": {
@@ -92,9 +92,16 @@
       "value": "matomo"
     },
     {
-      "name": "ARTIFACTORY_CREDS",
-      "displayName": "Artifactory-Creds",
-      "description": "The name of the secret contaning the Artifactory pull credentials",
+      "name": "DOCKER_REG",
+      "displayName": "Docker-Registry",
+      "description": "The name of the docker server",
+      "required": true,
+      "value": "docker-remote.artifacts.developer.gov.bc.ca/"
+    },
+    {
+      "name": "PULL_CREDS",
+      "displayName": "Pull-Credentials",
+      "description": "The name of the secret that will be used to pull from a docker server",
       "required": true,
       "value": "artifactory-creds"
     },
