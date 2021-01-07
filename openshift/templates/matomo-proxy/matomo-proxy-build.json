@@ -95,14 +95,14 @@
       "name": "DOCKER_REG",
       "displayName": "Docker-Registry",
       "description": "The name of the docker server",
-      "required": true,
+      "required": false,
       "value": "docker-remote.artifacts.developer.gov.bc.ca/"
     },
     {
       "name": "PULL_CREDS",
       "displayName": "Pull-Credentials",
       "description": "The name of the secret that will be used to pull from a docker server",
-      "required": true,
+      "required": false,
       "value": "artifactory-creds"
     },
     {
