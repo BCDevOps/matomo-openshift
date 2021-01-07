@@ -94,7 +94,7 @@
     {
       "name": "ARTIFACTORY_CREDS",
       "displayName": "Artifactory-Creds",
-      "description": "the artifactory pull cred",
+      "description": "The name of the secret contaning the Artifactory pull credentials",
       "required": true,
       "value": "artifactory-creds"
     },
