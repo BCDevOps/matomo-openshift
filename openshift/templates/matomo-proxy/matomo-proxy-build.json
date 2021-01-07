@@ -16,10 +16,7 @@
         "name": "${ENV_NAME}-pods-to-external-network",
         "labels": {
           "name": "pods-to-external-network",
-          "env": "${ENV_NAME}",
-          "app": "${APP_NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}",
-          "role": "${ROLE}"
+          "env": "${ENV_NAME}"
         }
       },
       "spec": {
