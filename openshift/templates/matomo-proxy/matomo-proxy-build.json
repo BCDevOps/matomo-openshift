@@ -123,25 +123,11 @@
       "value": "tools"
     },
     {
-      "name": "ROLE",
-      "displayName": "Role",
-      "description": "The role of this service within the application - used for Network Policies",
-      "required": true,
-      "value": "proxy"
-    },
-    {
       "name": "SUFFIX",
       "displayName": "Suffix",
       "description": "A suffix applied to all of the objects in this template.",
       "required": false,
       "value": ""
-    },
-    {
-      "name": "APP_GROUP",
-      "displayName": "App Group",
-      "description": "The name assigned to all of the deployments in this project.",
-      "required": true,
-      "value": "matomo-proxy"
     },
     {
       "name": "NAMESPACE_NAME",
