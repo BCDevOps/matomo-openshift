@@ -31,7 +31,7 @@ To run Matomo on openshift you **MUST** install [openshift-developer-tools](http
 By default, Matomo uses the artifactory docker registry. If you are going to keep the default settings artifactory **MUST** be enabled in your OCP cluster, otherwise you will have to tweak the param file to specify your docker registry.  
 
 
-#####Running with Artifactory:
+##### Running with Artifactory:
 There should already be a "artifacts-default-\*\*\*\*\*\*" secret in the tools environment of your openshift cluster. Copy the username and password of this 
 secret and run the following command in each environment you wish to build/deploy to. (example: tools and dev / tools and prod)
 ~~~
@@ -44,7 +44,7 @@ oc secrets link default artifactory-creds --for=pull
 oc secrets link builder artifactory-creds
 ~~~
 
-#####Running with custom Docker registry:
+##### Running with custom Docker registry:
 Pretty much the same command works when using a custom docker registry. You can change docker.io to be any server you want. If you're using the default unauthenticated docker registry, you can skip this section as long as you remeber to set DOCKER_REG and PULL_CREDS to blank and uncomment them.
 ~~~
 oc create secret docker-registry docker-creds \
@@ -55,7 +55,7 @@ oc create secret docker-registry docker-creds \
 oc secrets link default docker-creds --for=pull
 oc secrets link builder docker-creds
 ~~~
-#####Deploy:
+##### Deploy:
 
 Once the secret is created, use the manage script in the openshift folder to deploy your project  
 >./manage -n 4a9599 init  
