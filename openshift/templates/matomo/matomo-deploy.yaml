@@ -135,9 +135,7 @@ objects:
         role: ${ROLE}
         env: ${TAG_NAME}
     spec:
-      description: 'Allow matomo to talk to the database.
-
-        '
+      description: 'Allow matomo to talk to the database.'
       source:
         - - role=${ROLE}
           - app=${APP_NAME}${SUFFIX}
