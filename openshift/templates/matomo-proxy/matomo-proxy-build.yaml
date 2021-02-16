@@ -6,19 +6,6 @@ metadata:
     name: ${NAME}-build-template
     app: ${APP_NAME}
 objects:
-  - kind: NetworkSecurityPolicy
-    apiVersion: security.devops.gov.bc.ca/v1alpha1
-    metadata:
-      name: ${ENV_NAME}-pods-to-external-network
-      labels:
-        name: pods-to-external-network
-        env: ${ENV_NAME}
-    spec:
-      description: 'Allow the builds to access the internet. This only needs to be specified once per environment.'
-      source:
-        - - $namespace=${NAMESPACE_NAME}-${ENV_NAME}
-      destination:
-        - - ext:network=any
   - kind: ImageStream
     apiVersion: v1
     metadata:
