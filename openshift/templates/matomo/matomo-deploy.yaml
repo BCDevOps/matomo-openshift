@@ -4,10 +4,6 @@ metadata:
   name: ${NAME}-template
   labels:
     name: ${NAME}${NAME}-template
-    app: ${APP_NAME}
-    app-group: ${APP_GROUP}
-    role: ${ROLE}
-    env: ${TAG_NAME}
 objects:
   - kind: NetworkSecurityPolicy
     apiVersion: security.devops.gov.bc.ca/v1alpha1
@@ -20,7 +16,7 @@ objects:
         role: ${ROLE}
         env: ${TAG_NAME}
     spec:
-      description: 'Allow matomo to talk to the database and fetch data from the Internet.'
+      description: "Allow matomo to talk to the database and fetch data from the Internet."
       source:
         - - role=${ROLE}
           - app=${APP_NAME}${SUFFIX}
@@ -32,6 +28,7 @@ objects:
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
         - - ext:network=any
+
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -71,15 +68,11 @@ objects:
       test: false
       selector:
         app: ${NAME}
-        deploymentconfig: ${NAME}
-        template: ${NAME}-template
       template:
         metadata:
           labels:
             name: ${NAME}
             app: ${APP_NAME}
-            deploymentconfig: matomo
-            template: ${NAME}-template
             app-group: ${APP_GROUP}
             role: ${ROLE}
             env: ${TAG_NAME}
@@ -112,7 +105,7 @@ objects:
                 successThreshold: 1
                 tcpSocket:
                   port: 9000
-                timeoutSeconds: 5              
+                timeoutSeconds: 5
               resources:
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -153,6 +146,7 @@ objects:
               volumeMounts:
                 - mountPath: /var/www/html
                   name: matomo-source
+
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
@@ -170,6 +164,7 @@ objects:
       resources:
         requests:
           storage: ${PERSISTENT_VOLUME_SIZE}
+
   - kind: Route
     apiVersion: v1
     metadata:
@@ -190,6 +185,7 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+
   - kind: Secret
     apiVersion: v1
     metadata:
@@ -204,6 +200,7 @@ objects:
       username: ${MATOMO_ADMIN_USER}
       password: ${MATOMO_ADMIN_PASSWORD}
     type: Opaque
+
   - kind: Service
     apiVersion: v1
     metadata:
@@ -223,13 +220,15 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        deploymentconfig: ${NAME}
+        app: ${NAME}
       type: ClusterIP
       sessionAffinity: None
+
 parameters:
   - name: NAME
     displayName: Name
-    description: The name assigned to all of the OpenShift resources associated to
+    description:
+      The name assigned to all of the OpenShift resources associated to
       the server instance.
     required: true
     value: matomo
@@ -241,7 +240,8 @@ parameters:
   - name: IMAGE_NAMESPACE
     displayName: Image Namespace
     required: true
-    description: The namespace of the OpenShift project containing the imagestream
+    description:
+      The namespace of the OpenShift project containing the imagestream
       for the application.
     value: myproject
   - name: SOURCE_IMAGE_NAME
@@ -256,7 +256,8 @@ parameters:
     value: myproject
   - name: ROLE
     displayName: Role
-    description: The role of this service within the application - used for Network
+    description:
+      The role of this service within the application - used for Network
       Policies
     required: true
     value: matomo
@@ -264,7 +265,7 @@ parameters:
     displayName: Suffix
     description: A suffix applied to all of the objects in this template.
     required: false
-    value: ''
+    value: ""
   - name: APP_GROUP
     displayName: App Group
     description: The name assigned to all of the deployments in this project.
@@ -285,13 +286,14 @@ parameters:
     description: Password for the Matomo Admin user.
     required: true
     generate: expression
-    from: '[a-zA-Z0-9]{16}'
+    from: "[a-zA-Z0-9]{16}"
   - name: MATOMO_URL
     displayName: Matomo URL
-    description: The public domain endpoint for Matomo. A value will be created by
+    description:
+      The public domain endpoint for Matomo. A value will be created by
       default if not specified.
     required: false
-    value: ''
+    value: ""
   - name: ROUTE_TIMEOUT
     displayName: Route Timeout
     description: The timeout for the application route.  When this timeout is exceeded the application's route will respond with a 504 Gateway Timeout error.
@@ -304,7 +306,8 @@ parameters:
     value: 1Gi
   - name: PERSISTENT_VOLUME_CLASS
     displayName: Persistent Volume Class name
-    description: The class of the volume; gluster-file, gluster-block, netapp-file-standard,
+    description:
+      The class of the volume; gluster-file, gluster-block, netapp-file-standard,
       netapp-file-standard, netapp-block-standard
     required: false
     value: netapp-file-standard
