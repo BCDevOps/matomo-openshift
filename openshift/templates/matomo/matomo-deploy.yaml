@@ -23,7 +23,7 @@ objects:
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
       destination:
-        - - role=db
+        - - role=${DB_ROLE}
           - app=${APP_NAME}${SUFFIX}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
@@ -261,6 +261,13 @@ parameters:
       Policies
     required: true
     value: matomo
+  - name: DB_ROLE
+    displayName: Role
+    description:
+      The role of this DB service within the application - used for Network
+      Policies
+    required: true
+    value: db
   - name: SUFFIX
     displayName: Suffix
     description: A suffix applied to all of the objects in this template.
