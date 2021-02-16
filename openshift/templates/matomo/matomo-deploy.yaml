@@ -146,6 +146,7 @@ objects:
           - app=${APP_NAME}${SUFFIX}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+        - - ext:network=any
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
@@ -173,6 +174,8 @@ objects:
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
+      annotations:
+        haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
     spec:
       host: ${MATOMO_URL}
       tls:
@@ -283,6 +286,11 @@ parameters:
       default if not specified.
     required: false
     value: ''
+  - name: ROUTE_TIMEOUT
+    displayName: Route Timeout
+    description: The timeout for the application route.  When this timeout is exceeded the application's route will respond with a 504 Gateway Timeout error.
+    required: true
+    value: 120s
   - name: PERSISTENT_VOLUME_SIZE
     displayName: Persistent Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
