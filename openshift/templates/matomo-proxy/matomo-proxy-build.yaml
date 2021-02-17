@@ -33,9 +33,7 @@ objects:
           dockerfilePath: ${DOCKER_FILE_PATH}
           from:
             kind: DockerImage
-            name: ${DOCKER_REG}
-          pullSecret:
-            name: ${PULL_CREDS}
+            name: ${SOURCE_IMAGE_NAME}
       output:
         to:
           kind: ImageStreamTag
@@ -76,16 +74,11 @@ parameters:
     description: name of the project namespace
     required: true
     value: myproject
-  - name: DOCKER_REG
-    displayName: Docker-Registry
-    description: The name of the docker server
+  - name: SOURCE_IMAGE_NAME
+    displayName: Source IMage Name
+    description: The name of the source image.
     required: false
     value: docker-remote.artifacts.developer.gov.bc.ca/nginx:stable
-  - name: PULL_CREDS
-    displayName: Pull-Credentials
-    description: The name of the secret that will be used to pull from a docker server
-    required: false
-    value: artifactory-creds
   - name: GIT_REPO_URL
     displayName: Git Repo URL
     description: The URL to your GIT repo.
