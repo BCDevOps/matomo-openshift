@@ -77,7 +77,7 @@ parameters:
   - name: SOURCE_IMAGE_NAME
     displayName: Source IMage Name
     description: The name of the source image.
-    required: false
+    required: true
     value: docker-remote.artifacts.developer.gov.bc.ca/nginx:stable
   - name: GIT_REPO_URL
     displayName: Git Repo URL
