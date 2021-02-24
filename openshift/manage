@@ -217,11 +217,21 @@ fi
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
-updateDeploymentParams() {
-  (
-    _imageTag=${1:-"latest"}
+updateBuildParams() {
+  updateParams "build" "tools"
+}
 
-    _paramFiles=$(find . -name "*deploy.local.param")
+updateDeploymentParams() {
+  _imageTag=${1:-"latest"}
+  updateParams "deploy" $_imageTag
+}
+
+updateParams() {
+  (
+    _configType=${1}
+    _imageTag=${2}
+
+    _paramFiles=$(find . -name "*${_configType}.local.param")
     for paramFile in ${_paramFiles}; do
       # Uncomment and update the required deployment settings ...
       _parameterFilters="/TAG_NAME/s~^#.~~;"
@@ -246,8 +256,6 @@ deployApp(){
     if dcExists ${_appName}; then
       OPERATION=update genDepls.sh -u -l
     else
-      echoWarning "\nApplying required network security policies."
-      oc -n ${PROJECT_NAMESPACE}-${DEPLOYMENT_ENV_NAME} process -f ./templates/nsp/deploy.yaml -p NAMESPACE=${PROJECT_NAMESPACE}-${DEPLOYMENT_ENV_NAME} | oc create -f -
       genDepls.sh -l
     fi
 
@@ -288,7 +296,9 @@ initialize(){
   # Generate local params files ...
   echo "Generating local param files ..."
   genTemplateParams.sh -lf
-
+  updateBuildParams
+  updateDeploymentParams
+  
   echo "Environment settings:"
   echo "  Project namespace: ${PROJECT_NAMESPACE}"
   echo "  Source Repository (used for optional builds): ${GIT_URI}"
@@ -304,10 +314,7 @@ case "${_cmd}" in
     ;;
 
   build)
-    echoWarning "\nApplying required network security policies."
-    oc -n ${TOOLS} process -f ./templates/nsp/build.yaml -p NAMESPACE=${PROJECT_NAMESPACE} | oc create -f -
-    echoWarning "\nDeploying the build configuration.\nPlease wait for the build to complete before running any other command."
-    genBuilds.sh -l
+    genBuilds.sh -l -g
     ;;
 
   deploy)
