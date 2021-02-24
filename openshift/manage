@@ -222,7 +222,7 @@ updateBuildParams() {
 }
 
 updateDeploymentParams() {
-  _imageTag=${1:-"latest"}
+  _imageTag=${1:-"dev"}
   updateParams "deploy" $_imageTag
 }
 
