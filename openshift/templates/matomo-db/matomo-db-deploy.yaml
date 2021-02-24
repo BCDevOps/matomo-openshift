@@ -11,6 +11,7 @@ metadata:
     app-group: ${APP_GROUP}
     role: ${ROLE}
     env: ${TAG_NAME}
+    backup: ${BACKUP}
 objects:
   - kind: DeploymentConfig
     apiVersion: v1
@@ -24,6 +25,7 @@ objects:
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
+        backup: ${BACKUP}
     spec:
       strategy:
         type: Recreate
@@ -54,6 +56,7 @@ objects:
             app-group: ${APP_GROUP}
             role: ${ROLE}
             env: ${TAG_NAME}
+            backup: ${BACKUP}
         spec:
           volumes:
             - name: ${NAME}-data
@@ -132,6 +135,7 @@ objects:
       updatedReplicas: 0
       availableReplicas: 0
       unavailableReplicas: 0
+
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
@@ -142,6 +146,7 @@ objects:
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
+        backup: ${BACKUP}
     spec:
       storageClassName: ${PERSISTENT_VOLUME_CLASS}
       accessModes:
@@ -149,6 +154,7 @@ objects:
       resources:
         requests:
           storage: ${PERSISTENT_VOLUME_SIZE}
+
   - kind: Secret
     apiVersion: v1
     metadata:
@@ -159,12 +165,14 @@ objects:
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
+        backup: ${BACKUP}
     stringData:
       database-root-password: ${MYSQL_ROOT_PASSWORD}
       database-password: ${MYSQL_PASSWORD}
       database-user: ${MYSQL_USER}
       database-name: ${MYSQL_DATABASE}
     type: Opaque
+
   - kind: Service
     apiVersion: v1
     metadata:
@@ -189,6 +197,7 @@ objects:
         name: ${NAME}
       type: ClusterIP
       sessionAffinity: None
+
 parameters:
   - name: NAME
     displayName: Name
@@ -217,6 +226,11 @@ parameters:
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
     value: prod
+  - name: BACKUP
+    displayName: Backup Flag
+    description: Determines whether this database should be accessible by a backup container. Defaults to "false".
+    required: true
+    value: "false"
   - name: NAMESPACE_NAME
     displayName: Namespace Name
     description: The name of the namespace being deployed to..
@@ -278,7 +292,7 @@ parameters:
     description: The class of the volume; gluster-file, gluster-block, netapp-file-standard,
       netapp-file-standard, netapp-block-standard
     required: false
-    value: netapp-file-standard
+    value: netapp-block-standard
   - name: CPU_REQUEST
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.

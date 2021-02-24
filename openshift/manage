@@ -217,11 +217,21 @@ fi
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
-updateDeploymentParams() {
-  (
-    _imageTag=${1:-"latest"}
+updateBuildParams() {
+  updateParams "build" "tools"
+}
 
-    _paramFiles=$(find . -name "*deploy.local.param")
+updateDeploymentParams() {
+  _imageTag=${1:-"dev"}
+  updateParams "deploy" $_imageTag
+}
+
+updateParams() {
+  (
+    _configType=${1}
+    _imageTag=${2}
+
+    _paramFiles=$(find . -name "*${_configType}.local.param")
     for paramFile in ${_paramFiles}; do
       # Uncomment and update the required deployment settings ...
       _parameterFilters="/TAG_NAME/s~^#.~~;"
@@ -286,7 +296,9 @@ initialize(){
   # Generate local params files ...
   echo "Generating local param files ..."
   genTemplateParams.sh -lf
-
+  updateBuildParams
+  updateDeploymentParams
+  
   echo "Environment settings:"
   echo "  Project namespace: ${PROJECT_NAMESPACE}"
   echo "  Source Repository (used for optional builds): ${GIT_URI}"
