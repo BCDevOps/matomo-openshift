@@ -237,6 +237,8 @@ updateParams() {
       _parameterFilters="/TAG_NAME/s~^#.~~;"
       _parameterFilters="${_parameterFilters}/IMAGE_NAMESPACE/s~^#.~~;"
       _parameterFilters="${_parameterFilters}/NAMESPACE_NAME/s~^#.~~;"
+      _parameterFilters="${_parameterFilters}/MATOMO_URL/s~^#.~~;"
+      _parameterFilters="${_parameterFilters}/MATOMO_CONFIG_MAP_NAME/s~^#.~~;"
       _parameterFilters="${_parameterFilters}s~\(^TAG_NAME=\).*$~\1${_imageTag}~;"
       _parameterFilters="${_parameterFilters}s~\(^NAMESPACE_NAME=\).*$~\1${PROJECT_NAMESPACE}~;"
 
