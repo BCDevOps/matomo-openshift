@@ -8,10 +8,10 @@ objects:
   - kind: NetworkSecurityPolicy
     apiVersion: security.devops.gov.bc.ca/v1alpha1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       labels:
-        name: ${NAME}${SUFFIX}
-        app: ${APP_NAME}${SUFFIX}
+        name: ${NAME}
+        app: ${APP_NAME}
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
@@ -19,12 +19,12 @@ objects:
       description: "Allow matomo to talk to the database and fetch data from the Internet."
       source:
         - - role=${ROLE}
-          - app=${APP_NAME}${SUFFIX}
+          - app=${APP_NAME}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
       destination:
         - - role=${DB_ROLE}
-          - app=${APP_NAME}${SUFFIX}
+          - app=${APP_NAME}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
         - - ext:network=any
@@ -83,6 +83,12 @@ objects:
             - name: ${NAME}-config
               persistentVolumeClaim:
                 claimName: ${NAME}-config
+            - name: ${NAME}-php-ini
+              configMap:
+                name: ${MATOMO_CONFIG_MAP_NAME}
+                items:
+                  - key: ${PHP_INI_FILE_NAME}
+                    path: ${PHP_INI_FILE_NAME}
           containers:
             - image: ${SOURCE_IMAGE_NAME}
               imagePullPolicy: Always
@@ -119,6 +125,9 @@ objects:
                   name: matomo-source
                 - mountPath: /var/www/html/config
                   name: matomo-config
+                - name: ${NAME}-php-ini
+                  mountPath: ${PHP_INI_MOUNT_PATH}${PHP_INI_FILE_NAME}
+                  subPath: ${PHP_INI_FILE_NAME}
             - image: ${NAME}-proxy
               imagePullPolicy: Always
               livenessProbe:
@@ -306,6 +315,21 @@ parameters:
     description: The timeout for the application route.  When this timeout is exceeded the application's route will respond with a 504 Gateway Timeout error.
     required: true
     value: 120s
+  - name: PHP_INI_FILE_NAME
+    displayName: CAddy Config File Name
+    description: The name of the configuration file to be used for Caddy.
+    required: true
+    value: php.ini
+  - name: PHP_INI_MOUNT_PATH
+    displayName: php.ini Mount Path
+    description: The path to use to mount the php.ini file.
+    required: true
+    value: /usr/local/etc/php/
+  - name: MATOMO_CONFIG_MAP_NAME
+    displayName: Matomo Config Map Name
+    description: The name of the configuration map.
+    required: true
+    value: matomo-settings
   - name: PERSISTENT_VOLUME_SIZE
     displayName: Persistent Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
@@ -322,19 +346,19 @@ parameters:
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
     required: true
-    value: 100m
+    value: 250m
   - name: CPU_LIMIT
     displayName: Resources CPU Limit
     description: The resources CPU limit (in cores) for this build.
     required: true
-    value: 250m
+    value: 500m
   - name: MEMORY_REQUEST
     displayName: Resources Memory Request
     description: The resources Memory request (in Mi, Gi, etc) for this build.
     required: true
-    value: 100Mi
+    value: 256Mi
   - name: MEMORY_LIMIT
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
-    value: 512Mi
+    value: 1Gi
