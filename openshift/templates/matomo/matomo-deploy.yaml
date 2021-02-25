@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: ${NAME}-template
   labels:
-    name: ${NAME}${NAME}-template
+    name: ${NAME}-template
 objects:
   - kind: NetworkSecurityPolicy
     apiVersion: security.devops.gov.bc.ca/v1alpha1
