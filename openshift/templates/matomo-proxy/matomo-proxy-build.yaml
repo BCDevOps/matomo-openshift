@@ -64,11 +64,6 @@ parameters:
       be 'tools'
     required: true
     value: tools
-  - name: SUFFIX
-    displayName: Suffix
-    description: A suffix applied to all of the objects in this template.
-    required: false
-    value: ''
   - name: NAMESPACE_NAME
     displayName: NameSpace name
     description: name of the project namespace

@@ -277,11 +277,6 @@ parameters:
       Policies
     required: true
     value: db
-  - name: SUFFIX
-    displayName: Suffix
-    description: A suffix applied to all of the objects in this template.
-    required: false
-    value: ""
   - name: APP_GROUP
     displayName: App Group
     description: The name assigned to all of the deployments in this project.
