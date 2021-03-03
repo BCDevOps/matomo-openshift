@@ -5,29 +5,31 @@ metadata:
   labels:
     name: ${NAME}-template
 objects:
-  - kind: NetworkSecurityPolicy
-    apiVersion: security.devops.gov.bc.ca/v1alpha1
+  - kind: NetworkPolicy
+    apiVersion: networking.k8s.io/v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}-allow-ingress
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}-allow-ingress
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
     spec:
-      description: "Allow matomo to talk to the database and fetch data from the Internet."
-      source:
-        - - role=${ROLE}
-          - app=${APP_NAME}
-          - env=${TAG_NAME}
-          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
-      destination:
-        - - role=${DB_ROLE}
-          - app=${APP_NAME}
-          - env=${TAG_NAME}
-          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
-        - - ext:network=any
+      description: |
+        Allow traffic from routes into the matomo container(s).
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  network.openshift.io/policy-group: ingress
+      podSelector:
+        matchLabels:
+          role: ${ROLE}
+          app: ${APP_NAME}${SUFFIX}
+          env: ${TAG_NAME}
+      policyTypes:
+        - Ingress
 
   - kind: DeploymentConfig
     apiVersion: v1
@@ -270,13 +272,6 @@ parameters:
       Policies
     required: true
     value: matomo
-  - name: DB_ROLE
-    displayName: Role
-    description:
-      The role of this DB service within the application - used for Network
-      Policies
-    required: true
-    value: db
   - name: APP_GROUP
     displayName: App Group
     description: The name assigned to all of the deployments in this project.
