@@ -140,7 +140,7 @@ requireProjectNamespace(){
   # Deployment Environment Name
   if ! projectNamespaceSet; then
     echo
-    echo -e "${_red}You MUST specify a project namespace using the '-n' flag.${_nc}"  
+    echo -e "${_red}You MUST specify a project namespace using the '-n' flag.${_nc}"
     exit 1
   fi
 }
@@ -153,7 +153,7 @@ requireDeploymentEnvName(){
   if ! deploymentEnvNameSet; then
     echo
     echo -e "${_red}You MUST specify an environment name using the '-e' flag.${_nc}"
-    echo -e "${_red}Assuming a default would have unwanted consequences.${_nc}"    
+    echo -e "${_red}Assuming a default would have unwanted consequences.${_nc}"
     exit 1
   fi
 }
@@ -186,7 +186,7 @@ onUsesCommandLineArguments() {
 # Initialization:
 # -----------------------------------------------------------------------------------------------------------------
 # An empty settings.local.sh is required for the scripts to run correctly during the first run.
-# If no settings.local.sh is provided, the initialization above will fail due to 
+# If no settings.local.sh is provided, the initialization above will fail due to
 # the environment variable APPLY_LOCAL_SETTING set to 1.
 # Similarly, if the environment variable is not set, the initialize script will NOT
 # correctly create the local settings file
@@ -252,6 +252,20 @@ updateParams() {
   )
 }
 
+buildApp(){
+  (
+    _appName=${1:-matomo}
+
+    if isExists ${_appName}; then
+      echoWarning "\nUpdateing the build configuration.\nPlease wait for the build to complete before running any other command."
+      OPERATION=update genBuilds.sh -u -l
+    else
+      echoWarning "\nDeploying the build configuration.\nPlease wait for the build to complete before running any other command."
+      genBuilds.sh -l
+    fi
+  )
+}
+
 deployApp(){
   (
     _appName=${1:-matomo}
@@ -303,7 +317,7 @@ initialize(){
   genTemplateParams.sh -lf
   updateBuildParams
   updateDeploymentParams
-  
+
   echo "Environment settings:"
   echo "  Project namespace: ${PROJECT_NAMESPACE}"
   echo "  Source Repository (used for optional builds): ${GIT_URI}"
@@ -319,8 +333,8 @@ case "${_cmd}" in
     ;;
 
   build)
-    echoWarning "\nDeploying the build configuration.\nPlease wait for the build to complete before running any other command."
-    genBuilds.sh -l
+    appName=${1:-matomo}
+    buildApp ${appName}
     ;;
 
   deploy)
