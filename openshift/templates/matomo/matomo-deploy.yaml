@@ -8,10 +8,10 @@ objects:
   - kind: NetworkPolicy
     apiVersion: networking.k8s.io/v1
     metadata:
-      name: ${NAME}${SUFFIX}-allow-ingress
+      name: ${NAME}-allow-ingress
       labels:
-        name: ${NAME}${SUFFIX}-allow-ingress
-        app: ${APP_NAME}${SUFFIX}
+        name: ${NAME}-allow-ingress
+        app: ${APP_NAME}
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
@@ -26,7 +26,7 @@ objects:
       podSelector:
         matchLabels:
           role: ${ROLE}
-          app: ${APP_NAME}${SUFFIX}
+          app: ${APP_NAME}
           env: ${TAG_NAME}
       policyTypes:
         - Ingress
