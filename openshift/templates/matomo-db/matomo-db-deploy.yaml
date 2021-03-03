@@ -13,6 +13,39 @@ metadata:
     env: ${TAG_NAME}
     backup: ${BACKUP}
 objects:
+  - kind: NetworkPolicy
+    apiVersion: networking.k8s.io/v1
+    metadata:
+      name: ${NAME}
+      labels:
+        name: ${NAME}
+        app: ${APP_NAME}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      description: |
+        Allow the matomo service to access the database.
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  role: ${MATOMO_ROLE}
+                  app: ${APP_NAME}
+                  env: ${TAG_NAME}
+              namespaceSelector:
+                matchLabels:
+                  name: ${NAMESPACE_NAME}
+                  environment: ${TAG_NAME}
+          ports:
+            - protocol: TCP
+              port: 3306
+      podSelector:
+        matchLabels:
+          role: ${ROLE}
+          app: ${APP_NAME}
+          env: ${TAG_NAME}
+
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -20,8 +53,6 @@ objects:
       labels:
         name: ${NAME}
         app: ${APP_NAME}
-        service: ${NAME}
-        template: matomo-template
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
@@ -64,7 +95,7 @@ objects:
                 claimName: ${NAME}
           containers:
             - name: mariadb
-              image: ''
+              image: ""
               ports:
                 - containerPort: 3306
                   protocol: TCP
@@ -180,8 +211,6 @@ objects:
       labels:
         name: ${NAME}
         app: ${APP_NAME}
-        service: ${NAME}
-        template: matomo-template
         app-group: ${APP_GROUP}
         role: ${ROLE}
         env: ${TAG_NAME}
@@ -201,7 +230,8 @@ objects:
 parameters:
   - name: NAME
     displayName: Name
-    description: The name assigned to all of the OpenShift resources associated to
+    description:
+      The name assigned to all of the OpenShift resources associated to
       the server instance.
     required: true
     value: matomo-db
@@ -213,9 +243,10 @@ parameters:
   - name: IMAGE_NAMESPACE
     displayName: Image Namespace
     required: true
-    description: The namespace of the OpenShift project containing the imagestream
+    description:
+      The namespace of the OpenShift project containing the imagestream
       for the application.
-    value: myproject
+    value: 
   - name: SOURCE_IMAGE_NAME
     displayName: Source Image Name
     description: The name of the image to use for this resource.
@@ -235,13 +266,21 @@ parameters:
     displayName: Namespace Name
     description: The name of the namespace being deployed to..
     required: true
-    value: myproject
+    value: 
   - name: ROLE
     displayName: Role
-    description: The role of this service within the application - used for Network
+    description:
+      The role of this service within the application - used for Network
       Policies
     required: true
     value: db
+  - name: MATOMO_ROLE
+    displayName: Matomo Role
+    description:
+      The role of the matomo service within the application - used for Network
+      Policies
+    required: true
+    value: matomo
   - name: APP_GROUP
     displayName: App Group
     description: The name assigned to all of the deployments in this project.
@@ -254,24 +293,26 @@ parameters:
     value: matomo
   - name: MYSQL_USER
     displayName: MariaDB Connection Username
-    description: Username for MariaDB user that will be used for accessing the database.  Needs
+    description:
+      Username for MariaDB user that will be used for accessing the database.  Needs
       to be base64 encoded/
     required: true
     generate: expression
-    from: '[a-zA-Z0-9]{10}'
+    from: "[a-zA-Z0-9]{10}"
   - name: MYSQL_PASSWORD
     displayName: MariaDB Connection Password
     description: Password for the MariaDB connection user.  Needs to be base64 encoded/
     required: true
     generate: expression
-    from: '[a-zA-Z0-9]{10}'
+    from: "[a-zA-Z0-9]{10}"
   - name: MYSQL_ROOT_PASSWORD
     displayName: MariaDB Admin Password
-    description: Password for the MariaDB administrative account.  Needs to be base64
+    description:
+      Password for the MariaDB administrative account.  Needs to be base64
       encoded.
     required: true
     generate: expression
-    from: '[a-zA-Z0-9]{16}'
+    from: "[a-zA-Z0-9]{16}"
   - name: MOUNT_PATH
     displayName: Mount Path
     description: The path to mount the persistent volume.
@@ -284,7 +325,8 @@ parameters:
     value: 5Gi
   - name: PERSISTENT_VOLUME_CLASS
     displayName: Persistent Volume Class name
-    description: The class of the volume; gluster-file, gluster-block, netapp-file-standard,
+    description:
+      The class of the volume; gluster-file, gluster-block, netapp-file-standard,
       netapp-file-standard, netapp-block-standard
     required: false
     value: netapp-block-standard
