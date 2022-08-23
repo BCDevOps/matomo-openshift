@@ -1,5 +1,5 @@
 kind: Template
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 metadata:
   name: ${NAME}-build-template
   labels:
@@ -73,7 +73,7 @@ parameters:
     displayName: Source IMage Name
     description: The name of the source image.
     required: true
-    value: docker-remote.artifacts.developer.gov.bc.ca/nginx:stable
+    value: artifacts.developer.gov.bc.ca/docker-remote/nginx:stable
   - name: GIT_REPO_URL
     displayName: Git Repo URL
     description: The URL to your GIT repo.
